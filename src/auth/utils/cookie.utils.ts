@@ -1,0 +1,17 @@
+import { Response } from 'express';
+
+export class CookieUtils {
+  static setAccesTokenCookie(token: string, res: Response) {
+    const ONE_DAY = 1000 * 60 * 60 * 24;
+    const expiresIn = Number(process.env.SESSION_COOKIE_EXPIRES_IN);
+    const maxAge = Date.now() + expiresIn * ONE_DAY;
+
+    res.cookie('access_token', token, {
+      maxAge,
+      sameSite: false,
+      secure: false,
+      path: '/',
+      httpOnly: true,
+    });
+  }
+}
