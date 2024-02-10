@@ -6,10 +6,12 @@ export class CookieUtils {
     const expiresIn = Number(process.env.SESSION_COOKIE_EXPIRES_IN);
     const maxAge = Date.now() + expiresIn * ONE_DAY;
 
+    const secure = process.env.NODE_ENV === 'production';
+
     res.cookie('access_token', token, {
       maxAge,
-      sameSite: false,
-      secure: false,
+      sameSite: true,
+      secure,
       path: '/',
       httpOnly: true,
     });
