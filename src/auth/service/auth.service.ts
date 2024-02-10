@@ -22,7 +22,7 @@ export class AuthService {
     return user;
   }
 
-  generateJwt(payload: Record<string, any>) {
+  public generateJwt(payload: Record<string, any>) {
     return this.jwtService.sign(payload, {
       secret: this.configService.get('JWT_SECRET'),
     });

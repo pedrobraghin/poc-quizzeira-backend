@@ -1,12 +1,37 @@
-import { Controller, Get, Req, UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { UsersService } from './../service/users.service';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
+import { Response } from 'express';
 import { Request } from 'src/common/req.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { CreateUserReqDTO } from '../dtos/create-user-req.dto';
+import { CookieUtils } from 'src/auth/utils/cookie.utils';
 
 @Controller('users')
 export class UsersController {
+  constructor(private usersService: UsersService) {}
+
   @UseGuards(JwtAuthGuard)
   @Get('/me')
   async getMe(@Req() req: Request) {
     return req.user;
+  }
+
+  @Post()
+  async createUser(@Body() body: CreateUserReqDTO, @Res() res: Response) {
+    const token = await this.usersService.createUser(body);
+    CookieUtils.setAccesTokenCookie(token, res);
+
+    return res.status(HttpStatus.CREATED).json({
+      access_token: token,
+    });
   }
 }
