@@ -1,11 +1,7 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  UnauthorizedException,
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { CreateUserDTO } from 'src/users/dtos';
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { CreateUserDTO, UserDTO } from 'src/users/dtos';
 import { UsersRepository } from 'src/users/repository/users.repository';
 
 @Injectable()
@@ -28,31 +24,35 @@ export class AuthService {
     });
   }
 
-  async signIn(user: CreateUserDTO) {
-    if (!user) {
-      throw new UnauthorizedException('Invalid or expired token');
-    }
-
-    const userExists = await this.usersRepository.findByEmail(user.email);
+  async googleSignIn(userDto: CreateUserDTO) {
+    const userExists = await this.usersRepository.findByEmail(userDto.email);
+    let user: UserDTO;
 
     if (!userExists) {
-      return this.registerUser(user);
+      user = await this.registerUser(userDto);
+    } else {
+      user = await this.updateGoogleUser(userDto);
     }
 
     return this.generateJwt({
-      sub: userExists.id,
+      sub: user.id,
     });
   }
 
-  async registerUser(user: CreateUserDTO) {
-    try {
-      const newUser = await this.usersRepository.create(user);
+  private async registerUser(user: CreateUserDTO) {
+    const newUser = await this.usersRepository.create(user);
+    return newUser;
+  }
 
-      return this.generateJwt({
-        sub: newUser.id,
-      });
-    } catch (e) {
-      throw new InternalServerErrorException();
-    }
+  private updateGoogleUser(userDto: CreateUserDTO) {
+    const { name, email, picture, providerID } = userDto;
+
+    const updatedUser = this.usersRepository.updateByProviderId(providerID, {
+      name,
+      email,
+      picture,
+    });
+
+    return updatedUser;
   }
 }

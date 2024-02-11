@@ -19,7 +19,7 @@ export class AuthController {
   @Get('google/callback')
   @UseGuards(GoogleOAuthGuard)
   async googleAuthCallback(@Req() req, @Res() res: Response) {
-    const token = await this.authService.signIn(req.user);
+    const token = await this.authService.googleSignIn(req.user);
 
     CookieUtils.setAccesTokenCookie(token, res);
 
