@@ -14,6 +14,7 @@ import { Request } from 'src/common/req.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CreateUserReqDTO } from '../dtos/create-user-req.dto';
 import { CookieUtils } from 'src/auth/utils/cookie.utils';
+import { UserBuilder } from '../builders/user.builder';
 
 @Controller('users')
 export class UsersController {
@@ -22,7 +23,8 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Get('/me')
   async getMe(@Req() req: Request) {
-    return req.user;
+    const user = UserBuilder.publicUser(req.user);
+    return user;
   }
 
   @Post()
