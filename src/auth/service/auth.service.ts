@@ -61,7 +61,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password');
     }
 
-    const passwordsMatch = await PasswordUtils.comparePare(
+    const passwordsMatch = await PasswordUtils.comparePass(
       password,
       user.passwordHash,
     );
