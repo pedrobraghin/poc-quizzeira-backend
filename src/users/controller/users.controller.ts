@@ -12,7 +12,7 @@ import {
 import { Response } from 'express';
 import { Request } from 'src/common/req.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { CreateUserReqDTO } from '../dtos/create-user-req.dto';
+import { CreateUserReqDTO } from '../dtos/request/create-user-req.dto';
 import { CookieUtils } from 'src/auth/utils/cookie.utils';
 import { UserBuilder } from '../builders/user.builder';
 
@@ -30,6 +30,7 @@ export class UsersController {
   @Post()
   async createUser(@Body() body: CreateUserReqDTO, @Res() res: Response) {
     const token = await this.usersService.createUser(body);
+
     CookieUtils.setAccesTokenCookie(token, res);
 
     return res.status(HttpStatus.CREATED).json({

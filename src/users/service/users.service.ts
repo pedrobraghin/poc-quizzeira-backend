@@ -1,6 +1,6 @@
 import { JwtService } from '@nestjs/jwt';
 import { PasswordUtils } from '../utils/password.utils';
-import { CreateUserReqDTO } from '../dtos/create-user-req.dto';
+import { CreateUserReqDTO } from '../dtos/request/create-user-req.dto';
 import { UsersRepository } from './../repository/users.repository';
 import {
   BadRequestException,
@@ -48,5 +48,11 @@ export class UsersService {
     const token = this.generateJwt({ sub: user.id });
 
     return token;
+  }
+
+  async updateUserPassword(id: string, password: string) {
+    const passwordHash = await PasswordUtils.hashPass(password);
+
+    await this.usersRepository.update(id, { passwordHash });
   }
 }
