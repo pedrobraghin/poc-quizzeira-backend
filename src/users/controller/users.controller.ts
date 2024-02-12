@@ -2,6 +2,7 @@ import { UsersService } from './../service/users.service';
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpStatus,
   Post,
@@ -35,5 +36,19 @@ export class UsersController {
     return res.status(HttpStatus.CREATED).json({
       access_token: token,
     });
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete()
+  async delete(
+    @Req() req: Request,
+    @Body('password') password: string,
+    @Res() res: Response,
+  ) {
+    const user = UserBuilder.publicUser(req.user);
+    await this.usersService.deleteUser(user.id, password);
+    CookieUtils.logOut(res);
+
+    return res.status(HttpStatus.OK).send();
   }
 }
