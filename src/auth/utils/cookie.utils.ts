@@ -16,4 +16,9 @@ export class CookieUtils {
       httpOnly: true,
     });
   }
+
+  static logOut(res: Response) {
+    res.clearCookie('access_token');
+    return;
+  }
 }

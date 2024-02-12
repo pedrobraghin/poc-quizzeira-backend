@@ -4,6 +4,7 @@ import { CreateUserReqDTO } from '../dtos/request/create-user-req.dto';
 import { UsersRepository } from './../repository/users.repository';
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -48,6 +49,21 @@ export class UsersService {
     const token = this.generateJwt({ sub: user.id });
 
     return token;
+  }
+
+  async deleteUser(id: string, password: string) {
+    const user = await this.usersRepository.findById(id);
+
+    const passwordsMatch = await PasswordUtils.comparePass(
+      password,
+      user.passwordHash,
+    );
+
+    if (!passwordsMatch) {
+      throw new ForbiddenException();
+    }
+
+    return await this.usersRepository.delete(id);
   }
 
   async updateUserPassword(id: string, password: string) {
