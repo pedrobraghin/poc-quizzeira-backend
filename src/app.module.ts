@@ -11,12 +11,28 @@ import { CommunityModule } from './community/community.module';
 import { EmailModule } from './email/email.module';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaService } from './prisma.service';
-import { LoggerMiddleware } from './common/logger.decorator';
+import { LoggerMiddleware } from './common/logger.middleware';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+    }),
+    MailerModule.forRoot({
+      transport: {
+        host: process.env.EMAIL_HOST,
+        secure: process.env.NODE_ENV === 'production',
+        port: Number(process.env.EMAIL_PORT),
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS,
+        },
+        ignoreTLS: false,
+      },
+      defaults: {
+        from: process.env.EMAIL_FROM,
+      },
     }),
     AuthModule,
     UsersModule,
