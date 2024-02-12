@@ -7,7 +7,6 @@ export class LoggerMiddleware implements NestMiddleware {
     console.log(`[${req.method}]: `, req.originalUrl);
     console.log({
       cookies: req.cookies,
-      body: req.body,
     });
     next();
   }
