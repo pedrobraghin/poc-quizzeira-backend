@@ -5,7 +5,7 @@ export class PasswordUtils {
     return await bcrypt.hash(password, 12);
   }
 
-  static async comparePare(password: string, hash: string) {
+  static async comparePass(password: string, hash: string) {
     return await bcrypt.compare(password, hash);
   }
 }

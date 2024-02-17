@@ -37,11 +37,27 @@ export class UsersRepository {
     return user;
   }
 
+  async updateByProviderId(providerID: string, userDto: UpdateUserDTO) {
+    const user = await this.prismaService.user.update({
+      where: {
+        providerID,
+      },
+      data: userDto,
+    });
+
+    return user;
+  }
+
   async create(userDto: CreateUserDTO) {
     const user = await this.prismaService.user.create({
       data: userDto,
     });
 
     return user;
+  }
+
+  async delete(id: string) {
+    await this.prismaService.user.delete({ where: { id } });
+    return;
   }
 }
