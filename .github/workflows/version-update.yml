@@ -8,13 +8,15 @@ jobs:
   Version-Update:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - run: echo "Starting version update step"
       - run: echo "Job started by ${{ github.event_name }} event."
-      - uses: actions/checkout@v4
       - name: Setup node
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
-      - run: npm ci
-      - run: npm run test:unit
-      - run: npm run version:update
+          node-version: 20.
+      - name: Starting pipeline
+        run: |
+          npm ci
+          npm run test:unit
+          npm run version:update
