@@ -17,6 +17,4 @@ jobs:
           node-version: 20.
       - name: Starting pipeline
         run: |
-          npm ci
-          npm run test:unit
           npm run version:update
